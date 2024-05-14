@@ -15,13 +15,24 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
+    /**
+     * 根据用户名获取用户信息。
+     *
+     * @param username 用户名，用于查询用户信息。
+     * @return UserRespDTO 用户响应数据传输对象，包含查询到的用户信息。
+     */
     @Override
     public UserRespDTO getUserByUsername(String username) {
+        // 构建查询条件，查询指定用户名的用户信息
         LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, username);
         UserDO userDO = baseMapper.selectOne(queryWrapper);
+
+        // 创建用户响应DTO，并将查询到的用户信息拷贝到DTO中
         UserRespDTO result = new UserRespDTO();
         BeanUtils.copyProperties(userDO, result);
+
         return result;
     }
+
 }
