@@ -22,7 +22,6 @@ public class UserController {
      */
     @GetMapping ("/api/shortLink/v1/user/{username}")
     public UserRespDTO getUserByUsername(@PathVariable("username") String username) {
-
         return userService.getUserByUsername(username);
     }
 }
