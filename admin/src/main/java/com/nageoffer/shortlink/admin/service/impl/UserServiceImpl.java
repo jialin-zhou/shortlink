@@ -43,4 +43,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return result;
     }
 
+    /**
+     * 检查数据库中是否存在指定的用户名。
+     *
+     * @param username 待检查的用户名。
+     * @return 用户名存在 返回False，用户名不存在，返回True
+     */
+    @Override
+    public Boolean hasUsername(String username) {
+        LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getUsername, username);
+        UserDO userDO = baseMapper.selectOne(queryWrapper);
+        return userDO == null;
+    }
+
+
 }
