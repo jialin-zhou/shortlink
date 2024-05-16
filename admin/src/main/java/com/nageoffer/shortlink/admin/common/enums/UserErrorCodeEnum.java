@@ -1,6 +1,6 @@
 package com.nageoffer.shortlink.admin.common.enums;
 
-import com.nageoffer.shortlink.admin.common.convention.result.errorcode.IErrorCode;
+import com.nageoffer.shortlink.admin.common.convention.errorcode.IErrorCode;
 
 public enum UserErrorCodeEnum implements IErrorCode {
 

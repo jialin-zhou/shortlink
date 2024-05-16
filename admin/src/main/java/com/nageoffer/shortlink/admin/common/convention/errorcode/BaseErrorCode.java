@@ -1,4 +1,4 @@
-package com.nageoffer.shortlink.admin.common.convention.result.errorcode;
+package com.nageoffer.shortlink.admin.common.convention.errorcode;
 
 /**
  * 基础错误码定义
