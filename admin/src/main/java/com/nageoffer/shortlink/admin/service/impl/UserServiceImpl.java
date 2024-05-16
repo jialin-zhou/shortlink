@@ -1,5 +1,6 @@
 package com.nageoffer.shortlink.admin.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,6 +8,7 @@ import com.nageoffer.shortlink.admin.common.convention.exception.ClientException
 import com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum;
 import com.nageoffer.shortlink.admin.dao.entity.UserDO;
 import com.nageoffer.shortlink.admin.dao.mapper.UserMapper;
+import com.nageoffer.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.nageoffer.shortlink.admin.dto.resp.UserRespDTO;
 import com.nageoffer.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +68,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         // 方式二：使用Redis的布隆过滤器进行查询
         return userRegisterCachePenetrationBloomFilter.contains(username);
 
+    }
+
+    /**
+     * 用户注册
+     * @param requestParam 注册用户请求参数
+     */
+    @Override
+    public void register(UserRegisterReqDTO requestParam) {
+        if (hasUsername(requestParam.getUsername())) {
+            throw new ClientException(UserErrorCodeEnum.USER_EXIST_ERROR);
+        }
+        UserDO bean = BeanUtil.toBean(requestParam, UserDO.class);
+        int insert = baseMapper.insert(bean);
+        if (insert < 1) {
+            throw new ClientException(UserErrorCodeEnum.USER_SAVE_ERROR);
+        }
     }
 
 
