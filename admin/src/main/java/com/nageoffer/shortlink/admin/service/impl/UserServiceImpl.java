@@ -9,7 +9,9 @@ import com.nageoffer.shortlink.admin.dao.entity.UserDO;
 import com.nageoffer.shortlink.admin.dao.mapper.UserMapper;
 import com.nageoffer.shortlink.admin.dto.resp.UserRespDTO;
 import com.nageoffer.shortlink.admin.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBloomFilter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,10 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
+
+    private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     /**
      * 根据用户名获取用户信息。
      *
@@ -51,10 +56,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
      */
     @Override
     public Boolean hasUsername(String username) {
+        // 方式一：使用MyBatis-Plus的查询条件构建器构建查询条件，然后调用mapper的selectOne方法进行查询
+        /**
         LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, username);
         UserDO userDO = baseMapper.selectOne(queryWrapper);
         return userDO == null;
+         */
+        // 方式二：使用Redis的布隆过滤器进行查询
+        return userRegisterCachePenetrationBloomFilter.contains(username);
+
     }
 
 
