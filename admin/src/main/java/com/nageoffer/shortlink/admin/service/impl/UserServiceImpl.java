@@ -66,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return userDO == null;
          */
         // 方式二：使用Redis的布隆过滤器进行查询
-        return userRegisterCachePenetrationBloomFilter.contains(username);
+        return !userRegisterCachePenetrationBloomFilter.contains(username);
 
     }
 
@@ -76,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
      */
     @Override
     public void register(UserRegisterReqDTO requestParam) {
-        if (hasUsername(requestParam.getUsername())) {
+        if (!hasUsername(requestParam.getUsername())) {
             throw new ClientException(UserErrorCodeEnum.USER_EXIST_ERROR);
         }
         UserDO bean = BeanUtil.toBean(requestParam, UserDO.class);
@@ -84,6 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (insert < 1) {
             throw new ClientException(UserErrorCodeEnum.USER_SAVE_ERROR);
         }
+        userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
     }
 
 
