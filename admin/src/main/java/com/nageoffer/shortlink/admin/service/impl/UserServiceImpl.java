@@ -54,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 .eq(UserDO::getUsername, username);
         UserDO userDO = baseMapper.selectOne(queryWrapper);
         if (userDO == null) {
-            throw new ClientException(UserErrorCodeEnum.USER_NULL);
+            throw new ClientException(UserErrorCodeEnum.USER_NULL_ERROR);
         }
         log.info("查询到的用户信息：{}", userDO);
 
@@ -138,11 +138,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 .eq(UserDO::getDelFlag, 0);
         UserDO userDO = baseMapper.selectOne(queryWrapper);
         if (userDO == null) {
-            throw new ClientException(UserErrorCodeEnum.USER_NULL);
+            throw new ClientException(UserErrorCodeEnum.USER_NULL_ERROR);
         }
         Boolean isLogin = stringRedisTemplate.hasKey("login:" + requestParam.getUsername());
         if (isLogin != null && isLogin){
-            throw new ClientException(UserErrorCodeEnum.USER_LOGIN_ERROR);
+            throw new ClientException(UserErrorCodeEnum.USER_ALREADY_LOGIN_ERROR);
         }
         /**
          * Hash
@@ -165,5 +165,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public Boolean checkLogin(String username, String token) {
         return stringRedisTemplate.opsForHash().get("login:" + username, token) != null;
+    }
+
+    /**
+     * 用户退出登录
+     * @param username 用户名
+     * @param token 用户名对应的uuid Token
+     */
+    @Override
+    public void logout(String username, String token) {
+        if (checkLogin(username, token)) {
+            stringRedisTemplate.delete("login:" + username);
+            return;
+        }
+        throw new ClientException(UserErrorCodeEnum.USER_NOT_LOGIN_ERROR);
     }
 }
