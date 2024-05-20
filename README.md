@@ -17,11 +17,14 @@
 短链接经常出现在咱们日常生活中，大家总是能在某些活动节日里收到各种营销短信，里边就会出现短链接。帮助企业在营销活动中，识别用户行为、点击率等关键信息监控。
 
 还需要学习的知识点有：
+
 1、mybatis-plus  数据库操作
 
 2、redission，包括分布式锁、布隆过滤器
 
 3、shardingsphere，分库分表组件
+
+4. transmittable-thread-local 线程安全的ThreadLocal https://github.com/alibaba/transmittable-thread-local
 
 
 
