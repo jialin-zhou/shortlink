@@ -24,15 +24,19 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     @Override
     public void saveGroup(String groupName) {
         String gid;
+        /**
+         * 如果这个用户的短链接分组有相同的gid 则重新生成
+         * 直到生成一个没有重复的gid
+         */
         do {
             gid = RandomGenerator.generateRandom();
         } while (!hasGid(gid));
-        GroupDO groupDO = GroupDO.builder()
+        GroupDO groupDO = GroupDO.builder() // 为GroupDO类生成一个构建器模式的生成器方法
                 .gid(gid)
                 .sortOrder(0)
                 .username(UserContext.getUsername())
                 .name(groupName)
-                .build();
+                .build(); // 收集构建器对象中设置的所有字段值，并返回一个GroupDO实例
         baseMapper.insert(groupDO);
     }
 
@@ -47,7 +51,9 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     }
 
     private boolean hasGid(String gid) {
-
+        /**
+         * 要求一个用户下的所有短链接分组 gid 不同
+         */
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
                 // TODO 设置用户名
