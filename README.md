@@ -24,7 +24,7 @@
 
 3、shardingsphere，分库分表组件
 
-4. transmittable-thread-local 线程安全的ThreadLocal https://github.com/alibaba/transmittable-thread-local
+4、transmittable-thread-local，是一个线程安全的 ThreadLocal 框架，地址为：https://github.com/alibaba/transmittable-thread-local
 
 
 
