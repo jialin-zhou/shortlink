@@ -1,6 +1,6 @@
 package com.nageoffer.shortlink.project.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.text.StrBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,19 +29,38 @@ public class ShortLInkServiceImpl extends ServiceImpl<LinkMapper, ShortLinkDO> i
 
     /**
      * 生成短链接
-     * @param requestParam 创建短链接请求参数
-     * @return 创建短链接响应参数
+     *
+     * @param requestParam 创建短链接请求参数，包含域名、原始URL、分组ID等信息
+     * @return 创建短链接响应参数，包含完整的短链接URL、原始URL和分组ID
      */
     @Override
     public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO requestParam) {
+        // 生成短链接的后缀
         String shortLinkSuffix = generateSuffix(requestParam);
-        String fullShortUrl = requestParam.getDomain() + "/" + shortLinkSuffix;
-        ShortLinkDO shortLinkDO = BeanUtil.toBean(requestParam, ShortLinkDO.class);
-        shortLinkDO.setShortUri(shortLinkSuffix);
-        shortLinkDO.setFullShortUrl(fullShortUrl);
+        // 拼接完整的短链接URL
+        String fullShortUrl = StrBuilder.create(requestParam.getDomain())
+                .append("/")
+                .append(shortLinkSuffix).toString();
+
+        // 构建短链接数据对象
+        ShortLinkDO shortLinkDO = ShortLinkDO.builder()
+                .domain(requestParam.getDomain())
+                .originUrl(requestParam.getOriginUrl())
+                .gid(requestParam.getGid())
+                .createdType(requestParam.getCreatedType())
+                .validDateType(requestParam.getValidDateType())
+                .validDate(requestParam.getValidDate())
+                .describe(requestParam.getDescribe())
+                .shortUri(shortLinkSuffix)
+                .enableStatus(0)
+                .fullShortUrl(fullShortUrl)
+                .build();
+
         try {
+            // 尝试插入新的短链接记录到数据库
             baseMapper.insert(shortLinkDO);
         } catch (DuplicateKeyException ex) {
+            // 处理短链接重复生成的情况
             LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
                     .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
             ShortLinkDO hasShortLink = baseMapper.selectOne(queryWrapper);
@@ -50,13 +69,18 @@ public class ShortLInkServiceImpl extends ServiceImpl<LinkMapper, ShortLinkDO> i
                 throw new ServiceException("短链接重复生成");
             }
         }
+
+        // 将生成的短链接添加到缓存穿透防御Bloom Filter中
         shortUrlCreateRegisterCachePenetrationBloomFilter.add(requestParam.getDomain() + "/" + shortLinkSuffix);
+
+        // 返回创建短链接的响应参数
         return ShortLinkCreateRespDTO.builder()
                 .fullShortUrl(shortLinkDO.getFullShortUrl())
                 .originUrl(requestParam.getOriginUrl())
                 .gid(requestParam.getGid())
                 .build();
     }
+
 
     /**
      * 根据哈希算法生成短链接
