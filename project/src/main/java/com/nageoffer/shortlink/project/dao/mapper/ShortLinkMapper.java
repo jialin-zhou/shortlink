@@ -6,5 +6,5 @@ import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
 /**
  * 短链接持久层
  */
-public interface LinkMapper extends BaseMapper<ShortLinkDO> {
+public interface ShortLinkMapper extends BaseMapper<ShortLinkDO> {
 }
