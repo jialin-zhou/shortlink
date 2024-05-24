@@ -37,6 +37,11 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void saveGroup(String groupName) {
+        saveGroup(UserContext.getUsername(), groupName);
+    }
+
+    @Override
+    public void saveGroup(String username, String groupName) {
         String gid;
         /**
          * 如果这个用户的短链接分组有相同的gid 则重新生成
@@ -44,11 +49,11 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
          */
         do {
             gid = RandomGenerator.generateRandom();
-        } while (!hasGid(gid));
+        } while (!hasGid(username, gid));
         GroupDO groupDO = GroupDO.builder() // 为GroupDO类生成一个构建器模式的生成器方法
                 .gid(gid)
                 .sortOrder(0)
-                .username(UserContext.getUsername())
+                .username(username)
                 .name(groupName)
                 .build(); // 收集构建器对象中设置的所有字段值，并返回一个GroupDO实例
         baseMapper.insert(groupDO);
@@ -111,14 +116,14 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     }
 
 
-    private boolean hasGid(String gid) {
+    private boolean hasGid(String username, String gid) {
         /**
          * 要求一个用户下的所有短链接分组 gid 不同
          */
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
                 // TODO 设置用户名
-                .eq(GroupDO::getUsername, UserContext.getUsername());
+                .eq(GroupDO::getUsername, Optional.ofNullable(username).orElse(UserContext.getUsername()));
         GroupDO hasGroupFlag = baseMapper.selectOne(queryWrapper);
         return hasGroupFlag == null;
     }
