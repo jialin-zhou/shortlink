@@ -1,10 +1,10 @@
 package com.nageoffer.shortlink.project.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.StrBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.project.common.convention.exception.ServiceException;
 import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
@@ -18,11 +18,8 @@ import com.nageoffer.shortlink.project.toolkit.HashUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 /**
  * 短链接接口实现层
@@ -99,23 +96,8 @@ public class ShortLInkServiceImpl extends ServiceImpl<LinkMapper, ShortLinkDO> i
                 .eq(ShortLinkDO::getGid, requestParam.getGid())
                 .eq(ShortLinkDO::getEnableStatus, 0)
                 .eq(ShortLinkDO::getDelFlag, 0);
-
-        // 打印生成的查询条件
-        log.info("Query Wrapper: {}", queryWrapper.getSqlSegment());
-
         IPage<ShortLinkDO> resultPage = baseMapper.selectPage(requestParam, queryWrapper);
-
-        // 打印查询结果
-        log.info("Result Page Records: {}", resultPage.getRecords());
-
-        IPage<ShortLinkPageRespDTO> convert = new Page<>(resultPage.getCurrent(), resultPage.getSize(), resultPage.getTotal());
-        convert.setRecords(resultPage.getRecords().stream().map(each -> {
-            ShortLinkPageRespDTO respDTO = new ShortLinkPageRespDTO();
-            BeanUtils.copyProperties(each, respDTO);
-            return respDTO;
-        }).collect(Collectors.toList()));
-
-        return convert;
+        return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkPageRespDTO.class));
     }
 
 
