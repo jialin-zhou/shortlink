@@ -1,4 +1,4 @@
-package com.nageoffer.shortlink.admin.remote.dto.req;
+package com.nageoffer.shortlink.admin.remote.req;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
