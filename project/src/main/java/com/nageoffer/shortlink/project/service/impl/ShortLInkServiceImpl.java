@@ -106,7 +106,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
         // 返回创建短链接的响应参数
         return ShortLinkCreateRespDTO.builder()
-                .fullShortUrl(requestParam.getDomainProtocol() + shortLinkDO.getFullShortUrl())
+                .fullShortUrl("Http://" + shortLinkDO.getFullShortUrl())
                 .originUrl(requestParam.getOriginUrl())
                 .gid(requestParam.getGid())
                 .build();
