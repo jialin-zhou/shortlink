@@ -34,7 +34,6 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
      */
     IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO requestParam);
 
-
     /**
      * 查询短链接分组内数量
      * @param requestParam 查询短链接分组内数量请求参数
