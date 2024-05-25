@@ -1,4 +1,4 @@
-package com.nageoffer.shortlink.admin.remote.resp;
+package com.nageoffer.shortlink.admin.remote.dto.resp;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
