@@ -24,6 +24,7 @@ import com.nageoffer.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.nageoffer.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.project.service.ShortLinkService;
 import com.nageoffer.shortlink.project.toolkit.HashUtil;
+import com.nageoffer.shortlink.project.toolkit.LinkUtil;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -111,10 +112,15 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 throw new ServiceException("短链接重复生成");
             }
         }
+        // 缓存预热
+        stringRedisTemplate.opsForValue().set(
+                fullShortUrl,
+                requestParam.getOriginUrl(),
+                LinkUtil.getLinkCacheValidData(requestParam.getValidDate()),
+                TimeUnit.MILLISECONDS);
 
         // 将生成的短链接添加到缓存穿透防御Bloom Filter中
         shortUrlCreateRegisterCachePenetrationBloomFilter.add(requestParam.getDomain() + "/" + shortLinkSuffix);
-
         // 返回创建短链接的响应参数
         return ShortLinkCreateRespDTO.builder()
                 .fullShortUrl("Http://" + shortLinkDO.getFullShortUrl())
