@@ -377,7 +377,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             LinkLocaleStatsDO linkLocaleStatsDO;
             if (StrUtil.isNotBlank(infoCode) && StrUtil.equals(infoCode, "10000")) {
                 String provice = localeResultObj.getString("provice");
-                boolean unknownFlag = StrUtil.isBlank(provice);
+                boolean unknownFlag = StrUtil.equals(provice, "[]");
                 linkLocaleStatsDO = LinkLocaleStatsDO.builder()
                         .fullShortUrl(fullShortUrl)
                         .country("中国")
