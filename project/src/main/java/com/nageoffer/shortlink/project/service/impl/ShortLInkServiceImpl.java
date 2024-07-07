@@ -317,7 +317,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 ((HttpServletResponse) response).addCookie(uvCookie);
                 uvFirstFlag.set(Boolean.TRUE);
                 // TODO uv统计用redis集合不好
-                stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_KEY + fullShortUrl, uvFlag);
+                stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UV_KEY + fullShortUrl, uvFlag);
             };
             if(ArrayUtil.isNotEmpty(cookies)) {
                 Arrays.stream(cookies)
@@ -325,12 +325,16 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .findFirst()
                         .map(Cookie::getValue)
                         .ifPresentOrElse(each ->{
-                            Long added = stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_KEY + fullShortUrl, each);
-                            uvFirstFlag.set(added != null && added > 0L);
+                            Long uvAdded = stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UV_KEY + fullShortUrl, each);
+                            uvFirstFlag.set(uvAdded != null && uvAdded > 0L);
                         }, addResponseCookieTask);
             } else {
                 addResponseCookieTask.run();
             }
+            // TODO uip统计用redis集合不好
+            String userIP = LinkUtil.getIp(((HttpServletRequest) request));
+            Long uipAdded = stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UIP_KEY + fullShortUrl, userIP);
+            boolean uipFirstFlag = uipAdded != null && uipAdded > 0L;
             if(StrUtil.isBlank(gid)) {
                 LambdaQueryWrapper<ShortLinkGotoDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                         .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
@@ -343,7 +347,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             LinkAccessStatsDO build = LinkAccessStatsDO.builder()
                     .pv(1)
                     .uv(uvFirstFlag.get() ? 1 : 0)
-                    .uip(1)
+                    .uip(uipFirstFlag ? 1 : 0)
                     .hour(hourValue)
                     .weekday(weekValue)
                     .fullShortUrl(fullShortUrl)
