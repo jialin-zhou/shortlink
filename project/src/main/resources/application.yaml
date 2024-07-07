@@ -16,3 +16,9 @@ spring:
     view:
       prefix: /templates/
       suffix: .html
+
+# TODO 申请高德amapkey
+short-link:
+  stats:
+    locale:
+      amap-key: xxxxxxxxxx
