@@ -85,6 +85,10 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     private final LinkBrowserStateMapper linkBrowserStateMapper;
 
+    private final LinkDeviceStateMapper linkDeviceStateMapper;
+
+    private final LinkNetworkStateMapper linkNetworkStateMapper;
+
     @Value("${shortlink.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
 
@@ -405,7 +409,9 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .date(new Date())
                         .build();
                 linkOsStatsMapper.shortLinkOsStats(linkOsStatsDO);
-
+                /**
+                 * 短链接访问浏览器
+                 */
                 LinkBrowserStatsDO linkBrowserStatsDO = LinkBrowserStatsDO.builder()
                         .browser(LinkUtil.getBrowser(((HttpServletRequest) request)))
                         .cnt(1)
@@ -415,6 +421,29 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .build();
                 linkBrowserStateMapper.shortLinkBrowserState(linkBrowserStatsDO);
 
+                /**
+                 * 短链接访问设备
+                 */
+                LinkDeviceStatsDO linkDeviceStatsDO = LinkDeviceStatsDO.builder()
+                        .device(LinkUtil.getDevice(((HttpServletRequest) request)))
+                        .cnt(1)
+                        .gid(gid)
+                        .fullShortUrl(fullShortUrl)
+                        .date(new Date())
+                        .build();
+                linkDeviceStateMapper.shortLinkDeviceState(linkDeviceStatsDO);
+
+                /**
+                 * 短链接访问网络
+                 */
+                LinkNetworkStatsDO linkNetworkStatsDO = LinkNetworkStatsDO.builder()
+                        .network(LinkUtil.getNetwork(((HttpServletRequest) request)))
+                        .cnt(1)
+                        .gid(gid)
+                        .fullShortUrl(fullShortUrl)
+                        .date(new Date())
+                        .build();
+                linkNetworkStateMapper.shortLinkNetworkState(linkNetworkStatsDO);
             }
 
         }catch (Throwable es) {
