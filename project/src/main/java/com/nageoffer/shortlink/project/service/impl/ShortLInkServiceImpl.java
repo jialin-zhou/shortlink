@@ -55,6 +55,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.*;
 import static com.nageoffer.shortlink.project.common.constant.ShortLinkConstant.AMAP_REMOTE_URL;
@@ -88,6 +89,8 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final LinkDeviceStateMapper linkDeviceStateMapper;
 
     private final LinkNetworkStateMapper linkNetworkStateMapper;
+
+    private final LinkAccessLogsMapper linkAccessLogsMapper;
 
     @Value("${shortlink.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
@@ -323,15 +326,16 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         Cookie[] cookies = ((HttpServletRequest) request).getCookies();
 
         try{
+            AtomicReference<String> uv = new AtomicReference<>();
             Runnable addResponseCookieTask = () -> {
-                String uvFlag = UUID.fastUUID().toString();
-                Cookie uvCookie = new Cookie("uv", uvFlag);
+                uv.set(UUID.fastUUID().toString());
+                Cookie uvCookie = new Cookie("uv", uv.get());
                 uvCookie.setMaxAge(60 * 60 * 24 * 30);
                 uvCookie.setPath(StrUtil.sub(fullShortUrl, fullShortUrl.indexOf("/"), fullShortUrl.length()));
                 ((HttpServletResponse) response).addCookie(uvCookie);
                 uvFirstFlag.set(Boolean.TRUE);
                 // TODO uv统计用redis集合不好
-                stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UV_KEY + fullShortUrl, uvFlag);
+                stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UV_KEY + fullShortUrl, uv.get());
             };
             if(ArrayUtil.isNotEmpty(cookies)) {
                 Arrays.stream(cookies)
@@ -339,6 +343,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .findFirst()
                         .map(Cookie::getValue)
                         .ifPresentOrElse(each ->{
+                            uv.set(each);
                             Long uvAdded = stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UV_KEY + fullShortUrl, each);
                             uvFirstFlag.set(uvAdded != null && uvAdded > 0L);
                         }, addResponseCookieTask);
@@ -347,6 +352,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             }
             // TODO uip统计用redis集合不好
             String userIP = LinkUtil.getIp(((HttpServletRequest) request));
+            String browser = LinkUtil.getBrowser(((HttpServletRequest) request));
+            String os = LinkUtil.getOs((HttpServletRequest) request);
+            String device = LinkUtil.getDevice(((HttpServletRequest) request));
+            String network = LinkUtil.getNetwork(((HttpServletRequest) request));
+
             Long uipAdded = stringRedisTemplate.opsForSet().add(UV_SHORT_LINK_UIP_KEY + fullShortUrl, userIP);
             boolean uipFirstFlag = uipAdded != null && uipAdded > 0L;
             if(StrUtil.isBlank(gid)) {
@@ -403,7 +413,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                  */
                 LinkOsStatsDO linkOsStatsDO = LinkOsStatsDO.builder()
                         .fullShortUrl(fullShortUrl)
-                        .os(LinkUtil.getOs((HttpServletRequest) request))
+                        .os(os)
                         .cnt(1)
                         .gid(gid)
                         .date(new Date())
@@ -413,7 +423,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                  * 短链接访问浏览器
                  */
                 LinkBrowserStatsDO linkBrowserStatsDO = LinkBrowserStatsDO.builder()
-                        .browser(LinkUtil.getBrowser(((HttpServletRequest) request)))
+                        .browser(browser)
                         .cnt(1)
                         .gid(gid)
                         .fullShortUrl(fullShortUrl)
@@ -421,11 +431,24 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .build();
                 linkBrowserStateMapper.shortLinkBrowserState(linkBrowserStatsDO);
 
+
+                /**
+                 * 访问日志监控
+                 */
+                LinkAccessLogsDO linkAccessLogsDO = LinkAccessLogsDO.builder()
+                        .fullShortUrl(fullShortUrl)
+                        .gid(gid)
+                        .ip(userIP)
+                        .user(uv.get())
+                        .os(os)
+                        .browser(browser)
+                        .build();
+                linkAccessLogsMapper.insert(linkAccessLogsDO);
                 /**
                  * 短链接访问设备
                  */
                 LinkDeviceStatsDO linkDeviceStatsDO = LinkDeviceStatsDO.builder()
-                        .device(LinkUtil.getDevice(((HttpServletRequest) request)))
+                        .device(device)
                         .cnt(1)
                         .gid(gid)
                         .fullShortUrl(fullShortUrl)
@@ -437,7 +460,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                  * 短链接访问网络
                  */
                 LinkNetworkStatsDO linkNetworkStatsDO = LinkNetworkStatsDO.builder()
-                        .network(LinkUtil.getNetwork(((HttpServletRequest) request)))
+                        .network(network)
                         .cnt(1)
                         .gid(gid)
                         .fullShortUrl(fullShortUrl)
