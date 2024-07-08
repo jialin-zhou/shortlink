@@ -21,4 +21,4 @@ spring:
 short-link:
   stats:
     locale:
-      amap-key: xxxxxxxxxx
+      amap-key: 8b4a740504bbf370997c966a3db9fe80
