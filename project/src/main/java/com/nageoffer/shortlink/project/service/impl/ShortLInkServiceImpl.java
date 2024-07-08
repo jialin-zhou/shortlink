@@ -84,11 +84,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     private final LinkOsStatsMapper linkOsStatsMapper;
 
-    private final LinkBrowserStateMapper linkBrowserStateMapper;
+    private final LinkBrowserStatsMapper linkBrowserStateMapper;
 
-    private final LinkDeviceStateMapper linkDeviceStateMapper;
+    private final LinkDeviceStatsMapper linkDeviceStateMapper;
 
-    private final LinkNetworkStateMapper linkNetworkStateMapper;
+    private final LinkNetworkStatsMapper linkNetworkStateMapper;
 
     private final LinkAccessLogsMapper linkAccessLogsMapper;
 
