@@ -1,12 +1,12 @@
 package com.nageoffer.shortlink.admin.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
 import com.nageoffer.shortlink.admin.common.convention.result.Results;
+import com.nageoffer.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
+import com.nageoffer.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
+import com.nageoffer.shortlink.admin.dto.req.RecycleBinSaveReqDTO;
 import com.nageoffer.shortlink.admin.remote.ShortLinkRemoteService;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinRecoverReqDTO;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinRemoveReqDTO;
-import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinSaveReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import com.nageoffer.shortlink.admin.service.RecycleBinService;
@@ -24,7 +24,7 @@ public class RecycleBinController {
     private final ShortLinkRemoteService shortLinkRemoteService;
 
     /**
-     * 根据 URL 获取对应网站的标题
+     * 保存回收站
      */
     @PostMapping("/api/short-link/admin/v1/recycle-bin/save")
     public Result<Void> saveRecycleBin(@RequestBody RecycleBinSaveReqDTO requestParam) {
@@ -36,12 +36,12 @@ public class RecycleBinController {
      * 分页查询回收站短链接
      */
     @GetMapping("/api/short-link/admin/v1/recycle-bin/page")
-    public Result<IPage<ShortLinkPageRespDTO>> pageRecycleBinShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
+    public Result<Page<ShortLinkPageRespDTO>> pageShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
         return recycleBinService.pageRecycleBinShortLink(requestParam);
     }
 
     /**
-     * 回收站恢复链接
+     * 恢复短链接
      */
     @PostMapping("/api/short-link/admin/v1/recycle-bin/recover")
     public Result<Void> recoverRecycleBin(@RequestBody RecycleBinRecoverReqDTO requestParam) {
@@ -50,7 +50,7 @@ public class RecycleBinController {
     }
 
     /**
-     * 回收站删除短链接
+     * 移除短链接
      */
     @PostMapping("/api/short-link/admin/v1/recycle-bin/remove")
     public Result<Void> removeRecycleBin(@RequestBody RecycleBinRemoveReqDTO requestParam) {

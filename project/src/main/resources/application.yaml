@@ -16,6 +16,10 @@ spring:
     view:
       prefix: /templates/
       suffix: .html
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 
 # TODO 申请高德amapkey
 short-link:
