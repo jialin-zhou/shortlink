@@ -15,22 +15,69 @@
  * limitations under the License.
  */
 
-package com.nageoffer.shortlink.admin.remote.dto.req;
+package com.nageoffer.shortlink.admin.remote.dto.resp;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Date;
 
 /**
- * 回收站短链接分页请求参数
+ * 短链接监控访问记录响应参数
  * 公众号：马丁玩编程，回复：加群，添加马哥微信（备注：link）获取项目资料
  */
 @Data
-public class ShortLinkRecycleBinPageReqDTO extends Page {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ShortLinkStatsAccessRecordRespDTO {
 
     /**
-     * 分组标识
+     * 访客类型
      */
-    private List<String> gidList;
+    private String uvType;
+
+    /**
+     * 浏览器
+     */
+    private String browser;
+
+    /**
+     * 操作系统
+     */
+    private String os;
+
+    /**
+     * ip
+     */
+    private String ip;
+
+    /**
+     * 访问网络
+     */
+    private String network;
+
+    /**
+     * 访问设备
+     */
+    private String device;
+
+    /**
+     * 地区
+     */
+    private String locale;
+
+    /**
+     * 用户信息
+     */
+    private String user;
+
+    /**
+     * 访问时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
 }

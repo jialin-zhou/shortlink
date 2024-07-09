@@ -389,6 +389,9 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             String localeResultStr = HttpUtil.get(AMAP_REMOTE_URL, localeParamMap);
             JSONObject localeResultObj = JSON.parseObject(localeResultStr);
             String infoCode = localeResultObj.getString("infocode");
+            String province;
+            String city;
+            String adcode;
             LinkLocaleStatsDO linkLocaleStatsDO;
             if (StrUtil.isNotBlank(infoCode) && StrUtil.equals(infoCode, "10000")) {
                 /**
@@ -399,9 +402,9 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 linkLocaleStatsDO = LinkLocaleStatsDO.builder()
                         .fullShortUrl(fullShortUrl)
                         .country("中国")
-                        .province(unknownFlag ? "未知" : provice)
-                        .city(unknownFlag ? "未知" : localeResultObj.getString("city"))
-                        .adcode(unknownFlag ? "未知" : localeResultObj.getString("adcode"))
+                        .province(province = unknownFlag ? "未知" : provice)
+                        .city(city = unknownFlag ? "未知" : localeResultObj.getString("city"))
+                        .adcode(adcode = unknownFlag ? "未知" : localeResultObj.getString("adcode"))
                         .cnt(1)
                         .gid(gid)
                         .date(new Date())
@@ -442,6 +445,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .user(uv.get())
                         .os(os)
                         .browser(browser)
+                        .device(device)
+                        .network(network)
+                        .country("中国")
+                        .province(province)
+                        .city(city)
                         .build();
                 linkAccessLogsMapper.insert(linkAccessLogsDO);
                 /**

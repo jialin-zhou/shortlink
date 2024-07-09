@@ -20,9 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RecycleBinController {
 
-    ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService(){};
-
     private final RecycleBinService recycleBinService;
+    private final ShortLinkRemoteService shortLinkRemoteService;
 
     /**
      * 根据 URL 获取对应网站的标题

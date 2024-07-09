@@ -15,22 +15,30 @@
  * limitations under the License.
  */
 
-package com.nageoffer.shortlink.admin.remote.dto.req;
+package com.nageoffer.shortlink.admin.remote.dto.resp;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
- * 回收站短链接分页请求参数
+ * 短链接高频访问IP监控响应参数
  * 公众号：马丁玩编程，回复：加群，添加马哥微信（备注：link）获取项目资料
  */
 @Data
-public class ShortLinkRecycleBinPageReqDTO extends Page {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ShortLinkStatsTopIpRespDTO {
 
     /**
-     * 分组标识
+     * 统计
      */
-    private List<String> gidList;
+    private Integer cnt;
+
+    /**
+     * IP
+     */
+    private String ip;
 }

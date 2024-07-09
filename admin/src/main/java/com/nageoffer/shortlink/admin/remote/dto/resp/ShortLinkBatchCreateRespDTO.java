@@ -15,22 +15,33 @@
  * limitations under the License.
  */
 
-package com.nageoffer.shortlink.admin.remote.dto.req;
+package com.nageoffer.shortlink.admin.remote.dto.resp;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.nageoffer.shortlink.project.dto.resp.ShortLinkBaseInfoRespDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /**
- * 回收站短链接分页请求参数
+ * 短链接批量创建响应对象
  * 公众号：马丁玩编程，回复：加群，添加马哥微信（备注：link）获取项目资料
  */
 @Data
-public class ShortLinkRecycleBinPageReqDTO extends Page {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ShortLinkBatchCreateRespDTO {
 
     /**
-     * 分组标识
+     * 成功数量
      */
-    private List<String> gidList;
+    private Integer total;
+
+    /**
+     * 批量创建返回参数
+     */
+    private List<ShortLinkBaseInfoRespDTO> baseLinkInfos;
 }
