@@ -92,8 +92,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     private final LinkAccessLogsMapper linkAccessLogsMapper;
 
-    @Value("${shortlink.stats.locale.amap-key}")
+    @Value("${short-link.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
+
+    @Value("${short-link.domain.default}")
+    private String createShortLinkDefaultDomain;
 
     /**
      * 生成短链接
@@ -106,13 +109,13 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         // 生成短链接的后缀
         String shortLinkSuffix = generateSuffix(requestParam);
         // 拼接完整的短链接URL
-        String fullShortUrl = StrBuilder.create(requestParam.getDomain())
+        String fullShortUrl = StrBuilder.create(createShortLinkDefaultDomain)
                 .append("/")
                 .append(shortLinkSuffix).toString();
 
         // 构建短链接数据对象
         ShortLinkDO shortLinkDO = ShortLinkDO.builder()
-                .domain(requestParam.getDomain())
+                .domain(createShortLinkDefaultDomain)
                 .originUrl(requestParam.getOriginUrl())
                 .gid(requestParam.getGid())
                 .createdType(requestParam.getCreatedType())
@@ -252,7 +255,12 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     @Override
     public void redirect(String shortUri, ServletRequest request, ServletResponse response) {
         String serverName = request.getServerName();
-        String fullShortUrl = serverName + "/" + shortUri;
+        String serverPort = Optional.of(request.getServerPort())
+                .filter(each -> !Objects.equals(80, each))
+                .map(String::valueOf)
+                .map(each -> ":" + each)
+                .orElse("");
+        String fullShortUrl = serverName + serverPort + "/" + shortUri;
         String originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
         if (StrUtil.isNotBlank(originalLink)) {
             shortlinkStats(fullShortUrl, null, request, response);

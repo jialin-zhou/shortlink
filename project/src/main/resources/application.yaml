@@ -21,8 +21,18 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 
-# TODO 申请高德amapkey
 short-link:
+  domain:
+    default: nurl.ink:8001
   stats:
     locale:
       amap-key: 8b4a740504bbf370997c966a3db9fe80
+  goto-domain:
+    white-list:
+      enable: true
+      names: '拿个offer,知乎,掘金,博客园'
+      details:
+        - nageoffer.com
+        - zhihu.com
+        - juejin.cn
+        - cnblogs.com
