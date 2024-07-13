@@ -27,11 +27,6 @@ public class LinkAccessLogsDO extends BaseDO {
     private String fullShortUrl;
 
     /**
-     * 分组标识
-     */
-    private String gid;
-
-    /**
      * 用户信息
      */
     private String user;
@@ -52,27 +47,17 @@ public class LinkAccessLogsDO extends BaseDO {
     private String ip;
 
     /**
-     * device
-     */
-    private String device;
-
-    /**
-     * network
+     * 访问网络
      */
     private String network;
 
     /**
-     * country
+     * 访问设备
      */
-    private String country;
+    private String device;
 
     /**
-     * province
+     * 地区
      */
-    private String province;
-
-    /**
-     * city
-     */
-    private String city;
+    private String locale;
 }
