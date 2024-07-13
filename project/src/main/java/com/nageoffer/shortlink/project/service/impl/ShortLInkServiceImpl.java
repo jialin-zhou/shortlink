@@ -22,11 +22,13 @@ import com.nageoffer.shortlink.project.common.enums.VaildDateTypeEnum;
 import com.nageoffer.shortlink.project.config.GotoDomainWhiteListConfiguration;
 import com.nageoffer.shortlink.project.dao.entity.*;
 import com.nageoffer.shortlink.project.dao.mapper.*;
+import com.nageoffer.shortlink.project.dto.biz.ShortLinkStatsRecordDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkBatchCreateReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
 import com.nageoffer.shortlink.project.dto.resp.*;
+import com.nageoffer.shortlink.project.mq.producer.ShortLinkStatsSaveProducer;
 import com.nageoffer.shortlink.project.service.ShortLinkService;
 import com.nageoffer.shortlink.project.toolkit.HashUtil;
 import com.nageoffer.shortlink.project.toolkit.LinkUtil;
@@ -94,6 +96,8 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final LinkAccessLogsMapper linkAccessLogsMapper;
 
     private final GotoDomainWhiteListConfiguration gotoDomainWhiteListConfiguration;
+
+    private final ShortLinkStatsSaveProducer shortLinkStatsSaveProducer;
 
     @Value("${short-link.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
@@ -404,6 +408,14 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public void shortLinkStats(ShortLinkStatsRecordDTO statsRecord) {
+        Map<String, String> producerMap = new HashMap<>();
+        producerMap.put("statsRecord", JSON.toJSONString(statsRecord));
+        // 消息队列为什么选用RocketMQ？详情查看：https://nageoffer.com/shortlink/question
+        shortLinkStatsSaveProducer.send(producerMap);
     }
 
     private void shortlinkStats(String fullShortUrl, String gid,ServletRequest request, ServletResponse response) {

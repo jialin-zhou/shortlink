@@ -68,6 +68,16 @@
             <artifactId>jsoup</artifactId>
             <version>1.17.2</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-annotation-aspectj</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
