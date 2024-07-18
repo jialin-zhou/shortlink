@@ -85,6 +85,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     @Value("${short-link.domain.default}")
     private String createShortLinkDefaultDomain;
 
+
     /**
      * 生成短链接
      *
