@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * 用户上下文
  */
-public final class UserContext {
+public final class  UserContext {
 
     /**
      * <a herf="https://github.com/alibaba/transmittable-thread-local"/>
