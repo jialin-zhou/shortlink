@@ -16,3 +16,11 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+
+short-link:
+  group:
+    max-num: 20
+  flow-limit:
+    enable: true
+    time-window: 1
+    max-access-count: 3
