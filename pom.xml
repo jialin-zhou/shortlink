@@ -32,7 +32,7 @@
         <jsoup.version>1.15.3</jsoup.version>
         <easyexcel.version>3.1.3</easyexcel.version>
         <spotless-maven-plugin.version>2.22.1</spotless-maven-plugin.version>
-        <spring-kafka.version>2.9.5</spring-kafka.version>
+        <spring-kafka.version>2.9.11</spring-kafka.version>
 
         <!--编译编码-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
