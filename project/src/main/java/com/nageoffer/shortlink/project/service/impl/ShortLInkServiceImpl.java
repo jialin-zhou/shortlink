@@ -124,14 +124,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             baseMapper.insert(shortLinkDO);
             shortLinkGotoMapper.insert(linkGotoDO);
         } catch (DuplicateKeyException ex) {
-            // 处理短链接重复生成的情况
-            LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
-                    .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
-            ShortLinkDO hasShortLink = baseMapper.selectOne(queryWrapper);
-            if (hasShortLink != null) {
-                log.warn("短链接重复生成，fullShortUrl:{}", fullShortUrl);
-                throw new ServiceException("短链接重复生成");
+            // 首先判断是否存在布隆过滤器，如果不存在直接新增
+            if (!shortUrlCreateRegisterCachePenetrationBloomFilter.contains(fullShortUrl)) {
+                shortUrlCreateRegisterCachePenetrationBloomFilter.add(fullShortUrl);
             }
+            throw new ServiceException(String.format("短链接：%s 生成重复", fullShortUrl));
         }
         // 缓存预热 并设置有效期
         stringRedisTemplate.opsForValue().set(

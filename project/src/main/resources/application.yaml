@@ -12,6 +12,7 @@ spring:
       host: 172.27.212.83
       port: 6379
       password: 123321
+
   mvc:
     view:
       prefix: /templates/
@@ -20,6 +21,8 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+#message-queue：
+#  select： redis
 
 short-link:
   domain:
@@ -36,3 +39,8 @@ short-link:
         - zhihu.com
         - juejin.cn
         - cnblogs.com
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml

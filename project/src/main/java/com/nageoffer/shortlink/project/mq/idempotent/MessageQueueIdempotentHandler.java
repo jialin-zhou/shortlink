@@ -25,6 +25,7 @@ public class MessageQueueIdempotentHandler {
      * @return 消息是否消费过
      */
     public boolean isMessageProcessed(String messageId) {
+        // TODO 可以把幂等信息放在mysql中
         String key = IDEMPOTENT_KEY_PREFIX + messageId;
         return Boolean.TRUE.equals(stringRedisTemplate.opsForValue().setIfAbsent(key, "0", 2, TimeUnit.MINUTES));
     }
