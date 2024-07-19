@@ -58,6 +58,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.*;
 
@@ -525,7 +526,15 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     @SneakyThrows
     private String getFavicon(String url) {
+        if (!isValidUrl(url)) {
+            throw new IllegalArgumentException("Invalid URL");
+        }
+
         URL targetUrl = new URL(url);
+        if (!"http".equals(targetUrl.getProtocol()) && !"https".equals(targetUrl.getProtocol())) {
+            throw new IllegalArgumentException("Only HTTP and HTTPS protocols are supported");
+        }
+
         HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
@@ -537,6 +546,12 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             return faviconLink != null ? faviconLink.attr("abs:href") : null;
         }
         return null;
+    }
+
+    private boolean isValidUrl(String url) {
+        String regex = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(url).matches();
     }
 
     private void verificationWhitelist(String originUrl) {
