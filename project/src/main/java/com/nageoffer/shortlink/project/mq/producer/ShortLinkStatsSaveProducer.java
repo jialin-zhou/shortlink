@@ -9,7 +9,7 @@ import java.util.Map;
 import static com.nageoffer.shortlink.project.common.constant.RedisKeyConstant.SHORT_LINK_STATS_STREAM_TOPIC_KEY;
 
 /**
- * 短链接监控状态保存消息队列生产者
+ * 短链接监控状态保存-Redis消息队列-生产者
  */
 @Component
 @RequiredArgsConstructor

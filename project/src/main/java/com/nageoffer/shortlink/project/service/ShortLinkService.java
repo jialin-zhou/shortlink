@@ -72,4 +72,9 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
      * @param shortLinkStatsRecord 短链接统计实体参数
      */
     void shortLinkStats(ShortLinkStatsRecordDTO shortLinkStatsRecord);
+
+    /**
+     * Kafka消息队列-短链接统计
+     */
+    void shortLinkStatsByKafka(ShortLinkStatsRecordDTO statsRecord);
 }
