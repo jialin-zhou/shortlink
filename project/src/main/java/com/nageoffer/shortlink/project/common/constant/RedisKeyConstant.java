@@ -21,16 +21,6 @@ public class RedisKeyConstant {
     public static final String LOCK_GOTO_SHORT_LINK_KEY = "short-link_lock_goto_%s";
 
     /**
-     * 短链接UV统计前缀 key
-     */
-    public static String UV_SHORT_LINK_UV_KEY = "short-link:stats:uv:";
-
-    /**
-     * 短链接UIP统计前缀 key
-     */
-    public static String UV_SHORT_LINK_UIP_KEY = "short-link:stats:uv:";
-
-    /**
      * 短链接修改分组 ID 锁前缀 Key
      */
     public static final String LOCK_GID_UPDATE_KEY = "short-link:lock:update-gid:%s";
