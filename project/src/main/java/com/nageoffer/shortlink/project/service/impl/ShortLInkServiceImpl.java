@@ -53,6 +53,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -531,8 +532,20 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         }
 
         URL targetUrl = new URL(url);
-        if (!"http".equals(targetUrl.getProtocol()) && !"https".equals(targetUrl.getProtocol())) {
+        String protocol = targetUrl.getProtocol();
+        if (!"http".equals(protocol) && !"https".equals(protocol)) {
             throw new IllegalArgumentException("Only HTTP and HTTPS protocols are supported");
+        }
+
+        // Validate the URL against a whitelist
+        if (!isWhitelistedDomain(targetUrl.toString())) {
+            throw new SecurityException("Domain not allowed");
+        }
+
+        // DNS Rebinding Protection
+        InetAddress address = InetAddress.getByName(targetUrl.getHost());
+        if (address.isSiteLocalAddress() || address.isLoopbackAddress()) {
+            throw new SecurityException("Localhost access is not allowed");
         }
 
         HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
@@ -552,6 +565,12 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         String regex = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(url).matches();
+    }
+
+    private boolean isWhitelistedDomain(String domain) {
+        // Add your whitelisted domains here
+        Set<String> whitelistedDomains = Set.of("zhihu.com", "baidu.com");
+        return whitelistedDomains.contains(domain);
     }
 
     private void verificationWhitelist(String originUrl) {
