@@ -93,6 +93,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
      * @return 创建短链接响应参数，包含完整的短链接URL、原始URL和分组ID
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO requestParam) {
         // 生成短链接的后缀
         String shortLinkSuffix = generateSuffix(requestParam);
