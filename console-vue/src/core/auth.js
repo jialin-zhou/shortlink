@@ -14,7 +14,7 @@ export function setToken(token) {
 }
 
 export function setUsername(username) {
-  return Cookies.set('username', username)
+  return Cookies.set('username', username, { secure: true, sameSite: 'Lax' });
 }
 
 export function removeKey() {
