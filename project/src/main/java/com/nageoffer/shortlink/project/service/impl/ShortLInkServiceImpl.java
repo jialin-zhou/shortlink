@@ -193,7 +193,7 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             stringRedisTemplate.opsForValue().set(
                     String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                     requestParam.getOriginUrl(),
-                    LinkUtil.getLinkCacheValidTime(requestParam.getValidDate()), TimeUnit.MILLISECONDS
+                    LinkUtil.getLinkCacheValidData(requestParam.getValidDate()), TimeUnit.MILLISECONDS
             );
         } finally {
             lock.unlock();
