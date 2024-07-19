@@ -401,22 +401,24 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
      * @return 生成的短链接
      */
     private String generateSuffix(ShortLinkCreateReqDTO requestParam) {
-        String originUrl = requestParam.getOriginUrl();
-        String shortUri;
-
         int customGenerateCount = 0;
+        String shorUri;
         while (true) {
             if (customGenerateCount > 10) {
-                throw new ServiceException("短链接频繁生成，请稍后再试试");
+                throw new ServiceException("短链接频繁生成，请稍后再试");
             }
-            originUrl += System.currentTimeMillis();
-            shortUri = HashUtil.hashToBase62(originUrl);
-            if ( !shortUrlCreateRegisterCachePenetrationBloomFilter.contains(createShortLinkDefaultDomain + "/" + shortUri)) {
+            String originUrl = requestParam.getOriginUrl();
+            originUrl += UUID.randomUUID().toString();
+            // 短链接哈希算法生成冲突问题如何解决？详情查看：https://nageoffer.com/shortlink/question
+            shorUri = HashUtil.hashToBase62(originUrl);
+            // 判断短链接是否存在为什么不使用Set结构？详情查看：https://nageoffer.com/shortlink/question
+            // 如果布隆过滤器挂了，里边存的数据全丢失了，怎么恢复呢？详情查看：https://nageoffer.com/shortlink/question
+            if (!shortUrlCreateRegisterCachePenetrationBloomFilter.contains(createShortLinkDefaultDomain + "/" + shorUri)) {
                 break;
             }
             customGenerateCount++;
         }
-        return shortUri;
+        return shorUri;
     }
 
     @SneakyThrows
