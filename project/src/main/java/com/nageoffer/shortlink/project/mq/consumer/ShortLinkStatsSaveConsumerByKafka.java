@@ -51,7 +51,7 @@ public class ShortLinkStatsSaveConsumerByKafka {
     @Value("${short-link.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
 
-    @KafkaListener(topics = SHORT_LINK_STATS_STREAM_TOPIC_KEY, groupId = SHORT_LINK_STATS_STREAM_GROUP_KEY)
+    @KafkaListener(topics = SHORT_LINK_STATS_KAFKA_TOPIC_KEY, groupId = SHORT_LINK_STATS_STREAM_GROUP_KEY)
     public void consume(ConsumerRecord<String, String> record) {
         String key = record.key();
         String value = record.value();

@@ -13,7 +13,7 @@ spring:
       port: 6379
       password: 123321
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 172.27.212.83:9092
     consumer:
       group-id: short-link:stats-stream:only-group
       auto-offset-reset: earliest
