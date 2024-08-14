@@ -37,5 +37,6 @@ cd /
 cd /usr/local/kafka_2.12-2.8.0
 ./bin/zookeeper-server-start.sh ./config/zookeeper.properties
 ./bin/kafka-server-start.sh ./config/server.properties
+./bin/kafka-topics.sh --create --topic short-link_stats-stream --bootstrap-server 172.27.212.83:9092 --partitions 1 --replication-factor 1
 tail -f logs/server.log
 ```
