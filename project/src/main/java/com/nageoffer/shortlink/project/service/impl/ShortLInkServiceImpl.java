@@ -53,7 +53,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -285,10 +284,13 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .eq(ShortLinkDO::getDelFlag, 0)
                 .eq(ShortLinkDO::getEnableStatus, 0);
         ShortLinkDO hasShortLinkDO = baseMapper.selectOne(queryWrapper);
+        log.info(String.valueOf(requestParam));
+        log.info(String.valueOf(hasShortLinkDO));
         if (hasShortLinkDO == null) {
             throw new ClientException("短链接记录不存在");
         }
         if (Objects.equals(hasShortLinkDO.getGid(), requestParam.getGid())) {
+            log.info("Objects.equals(hasShortLinkDO.getGid(), requestParam.getGid())");
             LambdaUpdateWrapper<ShortLinkDO> updateWrapper = Wrappers.lambdaUpdate(ShortLinkDO.class)
                     .eq(ShortLinkDO::getFullShortUrl, requestParam.getFullShortUrl())
                     .eq(ShortLinkDO::getGid, requestParam.getGid())
@@ -419,6 +421,11 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 ((HttpServletResponse) response).sendRedirect(originalLink);
                 return;
             }
+            gotoIsNullShortLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl));
+            if (StrUtil.isNotBlank(gotoIsNullShortLink)) {
+                ((HttpServletResponse) response).sendRedirect("/page/notfound");
+                return;
+            }
             LambdaQueryWrapper<ShortLinkGotoDO> linkGotoQueryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                     .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
             ShortLinkGotoDO shortLinkGotoDO = shortLinkGotoMapper.selectOne(linkGotoQueryWrapper);
@@ -532,21 +539,21 @@ public class ShortLInkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         }
 
         URL targetUrl = new URL(url);
-        String protocol = targetUrl.getProtocol();
-        if (!"http".equals(protocol) && !"https".equals(protocol)) {
-            throw new IllegalArgumentException("Only HTTP and HTTPS protocols are supported");
-        }
-
-        // Validate the URL against a whitelist
-        if (!isWhitelistedDomain(targetUrl.toString())) {
-            throw new SecurityException("Domain not allowed");
-        }
-
-        // DNS Rebinding Protection
-        InetAddress address = InetAddress.getByName(targetUrl.getHost());
-        if (address.isSiteLocalAddress() || address.isLoopbackAddress()) {
-            throw new SecurityException("Localhost access is not allowed");
-        }
+//        String protocol = targetUrl.getProtocol();
+//        if (!"http".equals(protocol) && !"https".equals(protocol)) {
+//            throw new IllegalArgumentException("Only HTTP and HTTPS protocols are supported");
+//        }
+//
+//        // Validate the URL against a whitelist
+//        if (!isWhitelistedDomain(targetUrl.toString())) {
+//            throw new SecurityException("Domain not allowed");
+//        }
+//
+//        // DNS Rebinding Protection
+//        InetAddress address = InetAddress.getByName(targetUrl.getHost());
+//        if (address.isSiteLocalAddress() || address.isLoopbackAddress()) {
+//            throw new SecurityException("Localhost access is not allowed");
+//        }
 
         HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
         connection.setRequestMethod("GET");

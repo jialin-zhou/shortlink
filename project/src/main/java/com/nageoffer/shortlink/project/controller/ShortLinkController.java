@@ -17,6 +17,7 @@ import com.nageoffer.shortlink.project.service.ShortLinkService;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * 短链接控制层
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ShortLinkController {
@@ -61,6 +63,8 @@ public class ShortLinkController {
      */
     @PostMapping("/api/short-link/v1/update")
     public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO requestParam) {
+        log.info("2222OriginGid: " + requestParam.getOriginGid());
+        log.info("2222gid: " + requestParam.getGid());
         shortLinkService.updateShortLink(requestParam);
         return Results.success();
     }

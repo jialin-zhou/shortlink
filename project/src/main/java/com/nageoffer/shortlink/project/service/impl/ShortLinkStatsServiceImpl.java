@@ -16,6 +16,7 @@ import com.nageoffer.shortlink.project.dto.req.ShortLinkStatsReqDTO;
 import com.nageoffer.shortlink.project.dto.resp.*;
 import com.nageoffer.shortlink.project.service.ShortLinkStatsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 短链接监控接口实现层
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
@@ -406,6 +408,12 @@ public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
         List<String> userAccessLogsList = actualResult.getRecords().stream()
                 .map(ShortLinkStatsAccessRecordRespDTO::getUser)
                 .toList();
+        log.info("requestParam.getGid():", requestParam.getGid().toString());
+        log.info("requestParam.getGid():", requestParam.getFullShortUrl().toString());
+        log.info("requestParam.getGid():", requestParam.getEnableStatus().toString());
+        log.info("requestParam.getGid():", requestParam.getStartDate().toString());
+        log.info("requestParam.getGid():", requestParam.getEndDate().toString());
+        log.info("requestParam.getGid():", userAccessLogsList.toString());
         List<Map<String, Object>> uvTypeList = linkAccessLogsMapper.selectUvTypeByUsers(
                 requestParam.getGid(),
                 requestParam.getFullShortUrl(),
