@@ -26,5 +26,16 @@
 
 4、transmittable-thread-local，是一个线程安全的 ThreadLocal 框架，地址为：https://github.com/alibaba/transmittable-thread-local
 
-
-
+1. 启动redis
+```shell
+redis-cli
+exit
+```
+2. 启动kafka
+```shell
+cd /
+cd /usr/local/kafka_2.12-2.8.0
+./bin/zookeeper-server-start.sh ./config/zookeeper.properties
+./bin/kafka-server-start.sh ./config/server.properties
+tail -f logs/server.log
+```
