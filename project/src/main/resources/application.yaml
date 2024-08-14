@@ -2,6 +2,8 @@ server:
   port: 8001
 
 spring:
+  application:
+    name: short-link-project
   datasource:
     # ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
@@ -33,7 +35,7 @@ spring:
 
 short-link:
   domain:
-    default: nurl.ink:8001
+    default: 127.0.0.1:8001
   stats:
     locale:
       amap-key: 8b4a740504bbf370997c966a3db9fe80

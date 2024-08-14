@@ -16,6 +16,7 @@ import com.nageoffer.shortlink.project.dto.resp.ShortLinkBaseInfoRespDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,14 +27,13 @@ import java.util.List;
 /**
  * 短链接后管控制层
  */
+@Slf4j
 @RestController(value = "shortLinkControllerByAdmin")
 @RequiredArgsConstructor
 public class ShortLinkController {
 
-    /**
-     * TODO 后续重构为 Spring Cloud 调用
-     */
-    private final ShortLinkRemoteService shortLinkRemoteService;
+     private final ShortLinkRemoteService shortLinkRemoteService;
+    // private final ShortLinkActualRemoteService shortLinkActualRemoteService;
 
     /**
      * 创建短链接
@@ -61,6 +61,8 @@ public class ShortLinkController {
      */
     @PostMapping("/api/short-link/admin/v1/update")
     public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO requestParam) {
+        log.info("1111OriginGid: " + requestParam.getOriginGid());
+        log.info("1111gid: " + requestParam.getGid());
         shortLinkRemoteService.updateShortLink(requestParam);
         return Results.success();
     }
