@@ -408,11 +408,11 @@ public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
         List<String> userAccessLogsList = actualResult.getRecords().stream()
                 .map(ShortLinkStatsAccessRecordRespDTO::getUser)
                 .toList();
-        log.info("requestParam.getGid():", requestParam.getGid().toString());
-        log.info("requestParam.getGid():", requestParam.getFullShortUrl().toString());
-        log.info("requestParam.getGid():", requestParam.getEnableStatus().toString());
-        log.info("requestParam.getGid():", requestParam.getStartDate().toString());
-        log.info("requestParam.getGid():", requestParam.getEndDate().toString());
+        log.info("requestParam.getGid():", requestParam.getGid());
+        log.info("requestParam.getGid():", requestParam.getFullShortUrl());
+        log.info("requestParam.getGid():", requestParam.getEnableStatus());
+        log.info("requestParam.getGid():", requestParam.getStartDate());
+        log.info("requestParam.getGid():", requestParam.getEndDate());
         log.info("requestParam.getGid():", userAccessLogsList.toString());
         List<Map<String, Object>> uvTypeList = linkAccessLogsMapper.selectUvTypeByUsers(
                 requestParam.getGid(),
