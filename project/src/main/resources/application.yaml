@@ -34,6 +34,8 @@ spring:
 #  select： redis
 
 short-link:
+  # 消息队列选择
+  messageQueue: redis # 这里选择redis或者kafka
   domain:
     default: 127.0.0.1:8001
   stats:
