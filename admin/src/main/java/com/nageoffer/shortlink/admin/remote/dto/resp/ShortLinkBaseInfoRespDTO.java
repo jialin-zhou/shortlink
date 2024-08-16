@@ -17,29 +17,40 @@
 
 package com.nageoffer.shortlink.admin.remote.dto.resp;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
- * 短链接批量创建响应对象
+ * 短链接基础信息响应参数
  */
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ShortLinkBatchCreateRespDTO {
+@NoArgsConstructor
+public class ShortLinkBaseInfoRespDTO {
 
     /**
-     * 成功数量
+     * 描述信息
      */
-    private Integer total;
+    @ExcelProperty("标题")
+    @ColumnWidth(40)
+    private String describe;
 
     /**
-     * 批量创建返回参数
+     * 短链接
      */
-    private List<ShortLinkBaseInfoRespDTO> baseLinkInfos;
+    @ExcelProperty("短链接")
+    @ColumnWidth(40)
+    private String fullShortUrl;
+
+    /**
+     * 原始链接
+     */
+    @ExcelProperty("原始链接")
+    @ColumnWidth(80)
+    private String originUrl;
 }
