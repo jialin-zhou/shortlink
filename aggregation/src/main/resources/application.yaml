@@ -1,0 +1,52 @@
+server:
+  port: 8003
+
+spring:
+  application:
+    name: short-link-aggregation
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:shardingsphere-config-${database.env:dev}.yaml
+  data:
+    redis:
+      host: 172.27.212.83
+      port: 6379
+      password: 123321
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+aggregation:
+  remote-url: http://127.0.0.1:${server.port}
+
+short-link:
+  group:
+    max-num: 20
+  flow-limit:
+    enable: true
+    time-window: 1
+    max-access-count: 20
+  domain:
+    default: 127.0.0.1:8003
+  stats:
+    locale:
+      amap-key: 8b4a740504bbf370997c966a3db9fe80
+  goto-domain:
+    white-list:
+      enable: true
+      names: '??offer,??,??,???'
+      details:
+        - nageoffer.com
+        - zhihu.com
+        - juejin.cn
+        - cnblogs.com
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml
